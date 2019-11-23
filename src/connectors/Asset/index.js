@@ -14,7 +14,7 @@ export const getAssetsConnector = async ({ db }) => {
     if (!res) {
       throw new ApolloError('res undefined when querying getAssetsConnector')
     }
-    
+
     return res
   } catch(error) {
     throw new ApolloError(`Error in getAssetsConnector: ${error}`)
@@ -131,7 +131,6 @@ export const createAssetConnector = async ({ db }, type, amount, cost, currency,
     if(res.length > 0) {
       throw new ApolloError(`Asset with type=${type} already exists in database!`)
     }
-    // IMPLEMENT CHECK FOR EXISTING ASSET
        
     const query = `
       INSERT INTO Assets (type, amount, cost, currency, description) 
