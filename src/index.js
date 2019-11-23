@@ -3,7 +3,8 @@ import cors from 'cors';
 import 'dotenv/config'
 import { ApolloServer } from 'apollo-server-express';
 import { schema } from '../graphql/schema.js'
-import { resolvers } from './resolvers'
+import Query from './resolvers/Query'
+import Mutation from './resolvers/Mutation'
 import db from './db'
 
 
@@ -13,7 +14,10 @@ app.use(cors());
 
 const server = new ApolloServer({
   typeDefs: schema,
-  resolvers,
+  resolvers: {
+    Query,
+    Mutation,
+  },
   context:{
     db
   }

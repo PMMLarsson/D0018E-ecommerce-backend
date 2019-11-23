@@ -1,6 +1,6 @@
 import { Sequelize, Op } from 'sequelize'
 
-const operatorsAliases = {
+/* const operatorsAliases = {
   $eq: Op.eq,
   $ne: Op.ne,
   $gte: Op.gte,
@@ -35,7 +35,7 @@ const operatorsAliases = {
   $all: Op.all,
   $values: Op.values,
   $col: Op.col,
-}
+} */
 
 export const db = new Sequelize(
   `${process.env.DB_NAME}`,
@@ -49,7 +49,7 @@ export const db = new Sequelize(
       min: 0,
       idle: 10000,
     },
-    operatorsAliases,
+    /* operatorsAliases, */
     logging: false,
   }
 )
