@@ -23,7 +23,7 @@ export const getCustomerByIdConnector = async ({db}, id) => {
       throw new ApolloError('res undefined when querying getCustomerConnector')
     }
     
-    return res
+    return res[0]
   } catch(error) {
     throw new ApolloError(`Error in getCustomerConnector: ${error}`)
   }

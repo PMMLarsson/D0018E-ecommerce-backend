@@ -1,6 +1,9 @@
 import { increaseAssetConnector, decreaseAssetConnector, createAssetConnector } from '../../connectors/Asset'
 import { createCustomerConnector } from '../../connectors/Customer'
 import { createOrderConnector } from '../../connectors/Order'
+import { addCommentConnector, editCommentConnector, deleteCommentConnector } from '../../connectors/Comment'
+import { updateGradeConnector } from '../../connectors/Grade'
+import { updateCartConnector, clearCartConnector } from '../../connectors/Cart'
 
 export const Mutation = {
     increaseAsset: async (parent, { type, amount }, context) => {
@@ -15,8 +18,26 @@ export const Mutation = {
     createCustomer: async (parent, { fname, lname, email }, context) => {
       return createCustomerConnector(context, fname, lname, email)
     },
-    createOrder: async (parent, { buyer, metadata, total_cost, currency }, context) => {
-      return createOrderConnector(context, buyer, metadata, total_cost, currency)
+    createOrder: async (parent, { customer_id, metadata, total_cost, currency }, context) => {
+      return createOrderConnector(context, customer_id, metadata, total_cost, currency)
+    },
+    addComment: async (parent, { asset_type, customer_id, contents, by_name }, context) => {
+      return addCommentConnector(context, asset_type, customer_id, contents, by_name)
+    },
+    editComment: async (parent, { id, contents }, context) => {
+      return editCommentConnector(context, asset_type, customer_id, contents)
+    },
+    deleteComment: async (parent, { id }, context) => {
+      return deleteCommentConnector(context, asset_type, customer_id)
+    },
+    updateGrade: async (parent, { asset_type, customer_id, grade }, context) => {
+      return updateGradeConnector(context, asset_type, customer_id, grade)
+    },
+    updateCart: async (parent, { customer_id, contents, total_amount }, context) => {
+      return updateCartConnector(context, customer_id, contents, total_amount)
+    },
+    clearCart: async (parent, { customer_id }, context) => {
+      return clearCartConnector(context, customer_id)
     },
 }
 

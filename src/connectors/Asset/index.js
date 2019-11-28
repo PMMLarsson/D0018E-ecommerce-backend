@@ -5,8 +5,13 @@ export const getAssetsConnector = async ({ db }) => {
   try {
     const query = `
       SELECT
-        *
+        type,
+        amount,
+        cost/100 as cost,
+        currency,
+        description
       FROM Assets
+      ORDER BY type DESC
     `
     const res = await db.query(query, {
       type: QueryTypes.SELECT,
@@ -18,6 +23,32 @@ export const getAssetsConnector = async ({ db }) => {
     return res
   } catch(error) {
     throw new ApolloError(`Error in getAssetsConnector: ${error}`)
+  }
+}
+
+export const assetByTypeConnector = async ({ db }, type) => {
+  try {
+    const query = `
+      SELECT
+        type,
+        amount,
+        cost/100 as cost,
+        currency,
+        description
+      FROM Assets
+      WHERE type = $type
+    `
+    const res = await db.query(query, {
+      bind: { type },
+      type: QueryTypes.SELECT,
+    })
+    if (!res) {
+      throw new ApolloError('res undefined when querying assetsByTypeConnector')
+    }
+
+    return res[0]
+  } catch(error) {
+    throw new ApolloError(`Error in assetsByTypeConnector: ${error}`)
   }
 }
 
