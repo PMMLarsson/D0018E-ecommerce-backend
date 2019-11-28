@@ -2,6 +2,9 @@ import { getAdminsConnector } from '../../connectors/Admin'
 import { getAssetsConnector } from '../../connectors/Asset'
 import { getOrdersConnector } from '../../connectors/Order'
 import { getCustomerByIdConnector, loginConnector } from '../../connectors/Customer'
+import { commentsConnector } from '../../connectors/Comment'
+import { gradeConnector } from '../../connectors/Grade'
+import { cartConnector, cartSizeConnector } from '../../connectors/Cart'
 
 export const Query = {
   admins: async (parent, args, context) => {
@@ -16,8 +19,20 @@ export const Query = {
   getCustomer: async (parent, { id }, context) => {
     return getCustomerByIdConnector(context, id)
   },
-  login: async (parend, { email}, context) => {
+  login: async (parent, { email }, context) => {
     return loginConnector(context, email)
+  },
+  comments: async (parent, { asset_type }, context) => {
+    return commentsConnector(context, asset_type)
+  },
+  grade: async (parent, { asset_type, customer_id, grade }, context) => {
+    return gradeConnector(context, asset_type, customer_id, grade)
+  },
+  cart: async (parent, { customer_id }, context) => {
+    return cartConnector(context, customer_id)
+  },
+  cartSize: async (parent, { customer_id }, context) => {
+    return cartSizeConnector(context, customer_id)
   }
 }
 

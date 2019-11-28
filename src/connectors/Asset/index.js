@@ -5,8 +5,13 @@ export const getAssetsConnector = async ({ db }) => {
   try {
     const query = `
       SELECT
-        *
+        type,
+        amount,
+        cost/100 as cost,
+        currency,
+        description
       FROM Assets
+      ORDER BY type DESC
     `
     const res = await db.query(query, {
       type: QueryTypes.SELECT,

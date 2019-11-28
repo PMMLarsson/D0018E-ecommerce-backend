@@ -1,6 +1,8 @@
 import { ApolloError } from 'apollo-server-express'
 import { QueryTypes } from 'sequelize'
 
+import { clearCartConnector  } from "../Cart"
+
 export const getOrdersConnector = async ({db}, id) => {
   try {
     if(!id) {
@@ -29,9 +31,9 @@ export const getOrdersConnector = async ({db}, id) => {
   }
 }
 
-export const createOrderConnector = async ({ db }, buyer, metadata, total_cost, currency) => {
+export const createOrderConnector = async (context, customer_id, metadata, total_cost, currency) => {
   try {
-    if(!buyer|| !metadata || !total_cost || !currency) {
+    if(!customer_id || !metadata || !total_cost || !currency) {
       throw new ApolloError("Mutation variables for createOrderConnector invalid!")
     }
 
@@ -40,18 +42,20 @@ export const createOrderConnector = async ({ db }, buyer, metadata, total_cost, 
     }
 
     const query = `
-      INSERT INTO Orders (buyer, metadata, date, total_cost, currency) 
-      VALUES ($buyer, $metadata, NOW() AT TIME ZONE 'UTC', $total_cost, $currency)
+      SELECT create_order($customer_id, $metadata, $total_cost, $currency);
     `
-    await db.query(query, {
+    await context.db.query(query, {
       bind: {
-        buyer,
+        customer_id,
         metadata:JSON.stringify(metadata),
         total_cost:total_cost*100,
         currency
       },
       type: QueryTypes.INSERT,
     })
+
+    // After order was placed clear current cart
+    await clearCartConnector(context, customer_id)
     
     return {
       success: true,
