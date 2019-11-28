@@ -2,7 +2,7 @@ import { increaseAssetConnector, decreaseAssetConnector, createAssetConnector } 
 import { createCustomerConnector } from '../../connectors/Customer'
 import { createOrderConnector } from '../../connectors/Order'
 import { addCommentConnector, editCommentConnector, deleteCommentConnector } from '../../connectors/Comment'
-import { addGradeConnector, editGradeConnector } from '../../connectors/Grade'
+import { updateGradeConnector } from '../../connectors/Grade'
 import { updateCartConnector, clearCartConnector } from '../../connectors/Cart'
 
 export const Mutation = {
@@ -21,8 +21,8 @@ export const Mutation = {
     createOrder: async (parent, { customer_id, metadata, total_cost, currency }, context) => {
       return createOrderConnector(context, customer_id, metadata, total_cost, currency)
     },
-    addComment: async (parent, { asset_type, customer_id, contents }, context) => {
-      return addCommentConnector(context, asset_type, customer_id, contents)
+    addComment: async (parent, { asset_type, customer_id, contents, by_name }, context) => {
+      return addCommentConnector(context, asset_type, customer_id, contents, by_name)
     },
     editComment: async (parent, { id, contents }, context) => {
       return editCommentConnector(context, asset_type, customer_id, contents)
@@ -30,11 +30,8 @@ export const Mutation = {
     deleteComment: async (parent, { id }, context) => {
       return deleteCommentConnector(context, asset_type, customer_id)
     },
-    addGrade: async (parent, { asset_type, customer_id, grade }, context) => {
-      return addGradeConnector(context, asset_type, customer_id, grade)
-    },
-    editGrade: async (parent, { asset_type, customer_id, grade }, context) => {
-      return editGradeConnector(context, asset_type, customer_id, grade)
+    updateGrade: async (parent, { asset_type, customer_id, grade }, context) => {
+      return updateGradeConnector(context, asset_type, customer_id, grade)
     },
     updateCart: async (parent, { customer_id, contents, total_amount }, context) => {
       return updateCartConnector(context, customer_id, contents, total_amount)

@@ -18,18 +18,26 @@ export const gradeConnector = async ({ db }, asset_type) => {
     if (!res) {
       throw new ApolloError('res undefined when querying gradeConnector')
     }
+    if(res[0].avg === null) {
+      res[0].avg = 0
+    }
 
-    return res
+    return res[0].avg
   } catch(error) {
     throw new ApolloError(`Error in gradeConnector: ${error}`)
   }
 }
 
-export const addGradeConnector = async ({ db }, asset_type, customer_id, grade) => {
+export const updateGradeConnector = async ({ db }, asset_type, customer_id, grade) => {
   try {
     const query = `
-      INSERT INTO Grading
-      VALUES ($customer_id, $asset_type, NOW() AT TIME ZONE 'UTC', $grade)
+    INSERT INTO grading
+    VALUES ($customer_id, $asset_type, $grade, NOW() AT TIME ZONE 'UTC')
+    ON CONFLICT (customer_id, asset_type) DO UPDATE
+        SET customer_id = $customer_id,
+            asset_type = $asset_type,
+            grade = $grade,
+            date = NOW() AT TIME ZONE 'UTC'
     `
     await db.query(query, {
       bind: {
@@ -45,33 +53,6 @@ export const addGradeConnector = async ({ db }, asset_type, customer_id, grade) 
       message: `New grade created for ${asset_type}.`
     }
   } catch(error) {
-    throw new ApolloError(`Error in addGradeConnector: ${error}`)
-  }
-}
-
-export const editGradeConnector = async ({ db }, asset_type, customer_id, grade) => {
-  try {
-    const query = `
-      UPDATE Grading
-      SET
-        date = NOW() AT TIME ZONE 'UTC',
-        grade = $grade
-      WHERE asset_type = $asset_type and customer_id = $customer_id
-    `
-    await db.query(query, {
-      bind: {
-        asset_type,
-        customer_id,
-        grade
-      },
-      type: QueryTypes.UPDATE,
-    })
-
-    return {
-      success: true,
-      message: `Grade for ${asset_type} edited.`
-    }
-  } catch(error) {
-    throw new ApolloError(`Error in editGradeConnector: ${error}`)
+    throw new ApolloError(`Error in updateGradeConnector: ${error}`)
   }
 }

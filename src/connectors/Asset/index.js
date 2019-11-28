@@ -26,6 +26,32 @@ export const getAssetsConnector = async ({ db }) => {
   }
 }
 
+export const assetByTypeConnector = async ({ db }, type) => {
+  try {
+    const query = `
+      SELECT
+        type,
+        amount,
+        cost/100 as cost,
+        currency,
+        description
+      FROM Assets
+      WHERE type = $type
+    `
+    const res = await db.query(query, {
+      bind: { type },
+      type: QueryTypes.SELECT,
+    })
+    if (!res) {
+      throw new ApolloError('res undefined when querying assetsByTypeConnector')
+    }
+
+    return res[0]
+  } catch(error) {
+    throw new ApolloError(`Error in assetsByTypeConnector: ${error}`)
+  }
+}
+
 export const increaseAssetConnector = async ({ db }, type, amount) => {
   try {
     if(!type || !amount || type === "" || amount < 0) {

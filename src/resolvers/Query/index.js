@@ -1,5 +1,5 @@
 import { getAdminsConnector } from '../../connectors/Admin'
-import { getAssetsConnector } from '../../connectors/Asset'
+import { getAssetsConnector, assetByTypeConnector } from '../../connectors/Asset'
 import { getOrdersConnector } from '../../connectors/Order'
 import { getCustomerByIdConnector, loginConnector } from '../../connectors/Customer'
 import { commentsConnector } from '../../connectors/Comment'
@@ -12,6 +12,9 @@ export const Query = {
   },
   assets: async (parent, args, context) => {
     return getAssetsConnector(context)
+  },
+  assetByType: async (parent, { type }, context) => {
+    return assetByTypeConnector(context, type)
   },
   orders: async (parent, { id }, context) => {
     return getOrdersConnector(context, id)

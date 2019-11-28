@@ -5,7 +5,13 @@ export const commentsConnector = async ({ db }, asset_type) => {
   try {
     const query = `
       SELECT
-        *
+        id,
+        customer_id,
+        asset_type,
+        to_char(date,'yyyy-mm-dd hh24:mi:ss') as date,
+        contents,
+        upvotes,
+        by_name
       FROM Comments
       WHERE asset_type = $asset_type
     `
@@ -18,24 +24,24 @@ export const commentsConnector = async ({ db }, asset_type) => {
     if (!res) {
       throw new ApolloError('res undefined when querying commentsConnector')
     }
-
     return res
   } catch(error) {
     throw new ApolloError(`Error in commentsConnector: ${error}`)
   }
 }
 
-export const addCommentConnector = async ({ db }, asset_type, customer_id, contents) => {
+export const addCommentConnector = async ({ db }, asset_type, customer_id, contents, by_name) => {
   try {
     const query = `
-      INSERT INTO Comments (customer_id, asset_type, date, contents)
-      VALUES ($customer_id, $asset_type, NOW() AT TIME ZONE 'UTC', $contents)
+      INSERT INTO Comments (customer_id, asset_type, date, contents, by_name)
+      VALUES ($customer_id, $asset_type, NOW() AT TIME ZONE 'UTC', $contents, $by_name)
     `
     await db.query(query, {
       bind: {
         asset_type,
         customer_id,
-        contents
+        contents,
+        by_name
       },
       type: QueryTypes.INSERT,
     })
