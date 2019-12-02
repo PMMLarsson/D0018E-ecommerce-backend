@@ -22,6 +22,7 @@ export const schema = gql`
     contents: String
     upvotes: Int
     by_name: String
+    edited: Boolean
   }
 
   type Cart {
