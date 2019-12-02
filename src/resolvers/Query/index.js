@@ -22,8 +22,8 @@ export const Query = {
   getCustomer: async (parent, { id }, context) => {
     return getCustomerByIdConnector(context, id)
   },
-  login: async (parent, { email }, context) => {
-    return loginConnector(context, email)
+  login: async (parent, { email, password }, context) => {
+    return loginConnector(context, email, password)
   },
   comments: async (parent, { asset_type }, context) => {
     return commentsConnector(context, asset_type)

@@ -7,7 +7,7 @@ export const schema = gql`
     assetByType(type: String!): Asset
     getCustomer(id: ID!): Customer
     orders(id: ID!): [Order]
-    login(email: String!): LoginMessage
+    login(email: String!, password: String!): LoginMessage
     comments(asset_type: String!): [Comment]
     grade(asset_type: String!): Float
     cart(customer_id: ID!): Cart
@@ -40,8 +40,8 @@ export const schema = gql`
   type Mutation {
     increaseAsset(type: String!, amount: Int!): SuccessMessage
     decreaseAsset(type: String!, amount: Int!): SuccessMessage
-    createAsset(type: String!, amount: Int!, cost: Int!, currency:String!, description:String): SuccessMessage
-    createCustomer(fname: String!, lname: String!, email:String!): LoginMessage
+    createAsset(type: String!, amount: Int!, cost: Int!, currency: String!, description: String): SuccessMessage
+    createCustomer(fname: String!, lname: String!, email: String!, password: String!): LoginMessage
     createOrder(customer_id: ID!, metadata: [OrderMetaInput]!, total_cost: Int!, currency: String!): SuccessMessage
     addComment(asset_type: String!, customer_id: ID!, contents: String, by_name: String): SuccessMessage
     editComment(id: ID!, contents: String): SuccessMessage
@@ -101,7 +101,8 @@ export const schema = gql`
   }
   
   type LoginMessage {
-    id: ID!
+    id: ID
+    success: Boolean
     message: String
   }
 `;
