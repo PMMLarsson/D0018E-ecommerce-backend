@@ -10,10 +10,16 @@ export const getOrdersConnector = async ({db}, id) => {
     }
 
     const query = `
-      SELECT
-        *
-      FROM Orders
-      WHERE id = $id
+    SELECT
+      id,
+      buyer,
+      metadata,
+      to_char(date,'yyyy-mm-dd hh24:mi:ss') as date,
+      total_cost,
+      currency
+    FROM Orders
+    WHERE buyer = $id
+    ORDER BY id ASC
     `
     const res = await db.query(query, {
       bind: {
