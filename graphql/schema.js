@@ -74,7 +74,7 @@ export const schema = gql`
   type Order {
     id: ID!
     buyer: ID!
-    metadata: OrderMetaOutput
+    metadata: [OrderMetaOutput]
     date: String
     total_cost: Int
     currency: String
