@@ -1,5 +1,6 @@
 import { ApolloError } from 'apollo-server-express'
 import { QueryTypes } from 'sequelize'
+import * as bcrypt from 'bcryptjs'
 
 export const getCustomerByIdConnector = async ({db}, id) => {
   try {
@@ -29,17 +30,21 @@ export const getCustomerByIdConnector = async ({db}, id) => {
   }
 }
 
-export const createCustomerConnector = async ({ db }, fname, lname, email) => {
+export const createCustomerConnector = async ({ db }, fname, lname, email, password) => {
   try {
-    if(!fname || fname === "" || !lname || lname === "" || !email || email === "") {
+    if(!fname || fname === "" || !lname || lname === "" || !email || email === "" || !password || password.length < 7 || password.length > 255) {
       throw new ApolloError("Mutation variables for createCustomerConnector invalid!")
     }
 
     email = email.toLowerCase()
 
+    // Hash password
+    const salt = bcrypt.genSaltSync(10)
+    const hash = bcrypt.hashSync(password, salt)
+
     const query = `
-      INSERT INTO Customers (fname, lname, email) 
-      VALUES ($fname, $lname, $email)
+      INSERT INTO Customers (fname, lname, email, password_hash) 
+      VALUES ($fname, $lname, $email, $hash)
       RETURNING id
     `
     
@@ -48,11 +53,13 @@ export const createCustomerConnector = async ({ db }, fname, lname, email) => {
         fname,
         lname,
         email,
+        hash
       },
       type: QueryTypes.INSERT,
     })
     return {
       id: res[0][0].id,
+      success: true,
       message: `Welcome ${fname}!`
     }
   } catch(error) {
@@ -60,16 +67,18 @@ export const createCustomerConnector = async ({ db }, fname, lname, email) => {
   }
 }
 
-export const loginConnector = async ({ db }, email) => {
+export const loginConnector = async ({ db }, email, password) => {
   try {
-    if(!email || email === "") {
+    if(!email || email === "" || !password || password.length === 0) {
       throw new ApolloError("Query variables for login invalid!")
     }
 
     email = email.toLowerCase()
 
     const query = `
-      SELECT id 
+      SELECT
+        id,
+        password_hash 
       FROM Customers
       WHERE email=$email
     `
@@ -83,13 +92,25 @@ export const loginConnector = async ({ db }, email) => {
 
     if(!res|| res.length === 0) {
       return {
-        id:undefined,
-        message: `Unable to login.`
+        id: undefined,
+        success: false,
+        message: `Cannot find customer by that email!`
+      }
+    }
+
+    // Compare password with hashed password stored in DB
+
+    if(!bcrypt.compareSync(password, res[0].password_hash)) {
+      return {
+        id: undefined,
+        success: false,
+        message: `Password incorrect!`
       }
     }
     
     return {
       id:res[0].id,
+      success: true,
       message: `You were successfully logged in!`
     }
   } catch(error) {

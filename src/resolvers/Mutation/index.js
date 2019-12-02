@@ -15,8 +15,8 @@ export const Mutation = {
     createAsset: async (parent, { type, amount, cost, currency, description }, context) => {
       return createAssetConnector(context, type, amount, cost, currency, description)
     },
-    createCustomer: async (parent, { fname, lname, email }, context) => {
-      return createCustomerConnector(context, fname, lname, email)
+    createCustomer: async (parent, { fname, lname, email, password }, context) => {
+      return createCustomerConnector(context, fname, lname, email, password)
     },
     createOrder: async (parent, { customer_id, metadata, total_cost, currency }, context) => {
       return createOrderConnector(context, customer_id, metadata, total_cost, currency)
