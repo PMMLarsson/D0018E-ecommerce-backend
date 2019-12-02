@@ -11,9 +11,11 @@ export const commentsConnector = async ({ db }, asset_type) => {
         to_char(date,'yyyy-mm-dd hh24:mi:ss') as date,
         contents,
         upvotes,
-        by_name
+        by_name,
+        edited
       FROM Comments
       WHERE asset_type = $asset_type
+      ORDER BY date ASC
     `
     const res = await db.query(query, {
       bind: {
@@ -60,8 +62,8 @@ export const editCommentConnector = async ({ db }, id, contents) => {
     const query = `
       UPDATE Comments
       SET
-        date = NOW() AT TIME ZONE 'UTC',
-        contents = $contents
+        contents = $contents,
+        edited = true
       WHERE id = $id
     `
     await db.query(query, {

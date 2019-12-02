@@ -25,10 +25,10 @@ export const Mutation = {
       return addCommentConnector(context, asset_type, customer_id, contents, by_name)
     },
     editComment: async (parent, { id, contents }, context) => {
-      return editCommentConnector(context, asset_type, customer_id, contents)
+      return editCommentConnector(context, id, contents)
     },
     deleteComment: async (parent, { id }, context) => {
-      return deleteCommentConnector(context, asset_type, customer_id)
+      return deleteCommentConnector(context, id)
     },
     updateGrade: async (parent, { asset_type, customer_id, grade }, context) => {
       return updateGradeConnector(context, asset_type, customer_id, grade)
