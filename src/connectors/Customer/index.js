@@ -2,6 +2,8 @@ import { ApolloError } from 'apollo-server-express'
 import { QueryTypes } from 'sequelize'
 import * as bcrypt from 'bcryptjs'
 
+import { isAdminConnector } from "../Admin"
+
 export const getCustomerByIdConnector = async ({db}, id) => {
   try {
     if(!id) {
@@ -60,6 +62,7 @@ export const createCustomerConnector = async ({ db }, fname, lname, email, passw
     return {
       id: res[0][0].id,
       success: true,
+      isAdmin: false,
       message: `Welcome ${fname}!`
     }
   } catch(error) {
@@ -67,7 +70,7 @@ export const createCustomerConnector = async ({ db }, fname, lname, email, passw
   }
 }
 
-export const loginConnector = async ({ db }, email, password) => {
+export const loginConnector = async (context, email, password) => {
   try {
     if(!email || email === "" || !password || password.length === 0) {
       throw new ApolloError("Query variables for login invalid!")
@@ -83,7 +86,7 @@ export const loginConnector = async ({ db }, email, password) => {
       WHERE email=$email
     `
     
-    const res = await db.query(query, {
+    const res = await context.db.query(query, {
       bind: {
         email,
       },
@@ -94,6 +97,7 @@ export const loginConnector = async ({ db }, email, password) => {
       return {
         id: undefined,
         success: false,
+        isAdmin: false,
         message: `Cannot find customer by that email!`
       }
     }
@@ -107,10 +111,13 @@ export const loginConnector = async ({ db }, email, password) => {
         message: `Password incorrect!`
       }
     }
+
+    const isAdmin = await isAdminConnector(context, res[0].id)
     
     return {
       id:res[0].id,
       success: true,
+      isAdmin,
       message: `You were successfully logged in!`
     }
   } catch(error) {

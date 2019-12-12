@@ -15,7 +15,7 @@ export const getOrdersConnector = async ({db}, id) => {
       buyer,
       metadata,
       to_char(date,'yyyy-mm-dd hh24:mi:ss') as date,
-      total_cost,
+      total_cost/100 as total_cost,
       currency
     FROM Orders
     WHERE buyer = $id

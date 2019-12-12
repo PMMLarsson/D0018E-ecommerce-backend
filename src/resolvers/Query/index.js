@@ -1,4 +1,4 @@
-import { getAdminsConnector } from '../../connectors/Admin'
+import { isAdminConnector } from '../../connectors/Admin'
 import { getAssetsConnector, assetByTypeConnector } from '../../connectors/Asset'
 import { getOrdersConnector } from '../../connectors/Order'
 import { getCustomerByIdConnector, loginConnector } from '../../connectors/Customer'
@@ -7,8 +7,8 @@ import { gradeConnector } from '../../connectors/Grade'
 import { cartConnector, cartSizeConnector } from '../../connectors/Cart'
 
 export const Query = {
-  admins: async (parent, args, context) => {
-    return getAdminsConnector(context)
+ isAdmin: async (parent, { id }, context) => {
+    return isAdminConnector(context, id)
   },
   assets: async (parent, args, context) => {
     return getAssetsConnector(context)
