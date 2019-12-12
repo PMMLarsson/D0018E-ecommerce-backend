@@ -52,85 +52,6 @@ export const assetByTypeConnector = async ({ db }, type) => {
   }
 }
 
-export const increaseAssetConnector = async ({ db }, type, amount) => {
-  try {
-    if(!type || !amount || type === "" || amount < 0) {
-      throw new ApolloError("Mutation variables for increaseAssetConnector invalid!")
-    }
-
-    const query = `
-      UPDATE Assets
-      SET amount = amount + $amount
-      WHERE type = $type
-    `
-    await db.query(query, {
-      bind: {
-        amount,
-        type,
-      },
-      type: QueryTypes.UPDATE,
-    })
-    
-    return {
-      success: true,
-      message: `Asset ${type} was increase by ${amount}!`
-    }
-  } catch(error) {
-    throw new ApolloError(`Error in increaseAssetConnector: ${error}`)
-  }
-}
-
-export const decreaseAssetConnector = async ({ db }, type, amount) => {
-  try {
-    if(!type || !amount || type === "" || amount < 0) {
-      throw new ApolloError("Mutation variables for decreaseAssetConnector invalid!")
-    }
-
-    // Make sure that a decrease wont decrease the asset below 0
-    const selectAsset = 
-    `SELECT
-      amount
-      FROM Assets
-      WHERE type = $type
-    `
-    const res = await db.query(selectAsset, {
-      bind: {
-        type,
-      },
-      type: QueryTypes.SELECT,
-    })
-
-    if(!res) {
-      throw new ApolloError('res undefined when querying for specific assets in decreaseAssetConnector mutation')
-    }
-
-    if(res[0].amount - amount < 0) {
-      throw new ApolloError('Cannot decrease an Asset amount below 0!')
-    }
-    // IMPLEMENT CHECK FOR OK AMOUNT-AMOUNT
-       
-    const query = `
-      UPDATE Assets
-      SET amount = amount - $amount
-      WHERE type = $type
-    `
-    await db.query(query, {
-      bind: {
-        amount,
-        type,
-      },
-      type: QueryTypes.UPDATE,
-    })
-    
-    return {
-      success: true,
-      message: `Asset ${type} was decreased by ${amount}!`
-    }
-  } catch(error) {
-    throw new ApolloError(`Error in decreaseAssetConnector: ${error}`)
-  }
-}
-
 export const createAssetConnector = async ({ db }, type, amount, cost, currency, description) => {
   try {
     if(!type || !amount || !cost || !currency || !description) {
@@ -184,5 +105,44 @@ export const createAssetConnector = async ({ db }, type, amount, cost, currency,
     }
   } catch(error) {
     throw new ApolloError(`Error in createAssetConnector: ${error}`)
+  }
+}
+
+export const editAssetConnector = async ({ db }, type, amount, cost, currency, description) => {
+  try {
+    if(!type || !currency || !description) {
+      throw new ApolloError("Mutation variables for editAssetConnector invalid!")
+    }
+
+    if(type === "" || amount < 0 || cost < 0 || currency === "") {
+      throw new ApolloError("Mutation variables for editAssetConnector invalid!")
+    }
+
+    const query = `
+      UPDATE Assets
+      SET
+        amount = $amount,
+        cost = $cost,
+        currency = $currency,
+        description = $description
+      WHERE type = $type
+    `
+    await db.query(query, {
+      bind: {
+        type,
+        amount,
+        cost:cost*100,
+        currency,
+        description
+      },
+      type: QueryTypes.UPDATE,
+    })
+    
+    return {
+      success: true,
+      message: `Asset ${type} was updated!`
+    }
+  } catch(error) {
+    throw new ApolloError(`Error in editAssetConnector: ${error}`)
   }
 }

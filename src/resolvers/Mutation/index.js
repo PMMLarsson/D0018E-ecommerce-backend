@@ -1,4 +1,4 @@
-import { increaseAssetConnector, decreaseAssetConnector, createAssetConnector } from '../../connectors/Asset'
+import { createAssetConnector, editAssetConnector } from '../../connectors/Asset'
 import { createCustomerConnector } from '../../connectors/Customer'
 import { createOrderConnector } from '../../connectors/Order'
 import { addCommentConnector, editCommentConnector, deleteCommentConnector } from '../../connectors/Comment'
@@ -6,14 +6,11 @@ import { updateGradeConnector } from '../../connectors/Grade'
 import { updateCartConnector, clearCartConnector } from '../../connectors/Cart'
 
 export const Mutation = {
-    increaseAsset: async (parent, { type, amount }, context) => {
-      return increaseAssetConnector(context, type, amount)
-    },
-    decreaseAsset: async (parent, { type, amount }, context) => {
-      return decreaseAssetConnector(context, type, amount)
-    },
     createAsset: async (parent, { type, amount, cost, currency, description }, context) => {
       return createAssetConnector(context, type, amount, cost, currency, description)
+    },
+    editAsset: async (parent, { type, amount, cost, currency, description }, context) => {
+      return editAssetConnector(context, type, amount, cost, currency, description)
     },
     createCustomer: async (parent, { fname, lname, email, password }, context) => {
       return createCustomerConnector(context, fname, lname, email, password)
