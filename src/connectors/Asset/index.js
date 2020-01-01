@@ -146,3 +146,31 @@ export const editAssetConnector = async ({ db }, type, amount, cost, currency, d
     throw new ApolloError(`Error in editAssetConnector: ${error}`)
   }
 }
+
+export const searchConnector = async ({ db }, input) => {
+  const searchString = input.toUpperCase()
+  try {
+    const query = `
+      SELECT
+        type,
+        amount,
+        cost/100 as cost,
+        currency,
+        description
+      FROM Assets
+      WHERE type LIKE $searchString
+      ORDER BY type DESC
+    `
+    const res = await db.query(query, {
+      bind: {searchString: searchString + '%' },
+      type: QueryTypes.SELECT,
+    })
+    if (!res) {
+      throw new ApolloError('res undefined when querying searchConnector')
+    }
+
+    return res
+  } catch(error) {
+    throw new ApolloError(`Error in searchConnector: ${error}`)
+  }
+}

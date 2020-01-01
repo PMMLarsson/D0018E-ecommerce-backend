@@ -1,5 +1,5 @@
 import { isAdminConnector } from '../../connectors/Admin'
-import { getAssetsConnector, assetByTypeConnector } from '../../connectors/Asset'
+import { getAssetsConnector, assetByTypeConnector, searchConnector } from '../../connectors/Asset'
 import { getOrdersConnector } from '../../connectors/Order'
 import { getCustomerByIdConnector, loginConnector } from '../../connectors/Customer'
 import { commentsConnector } from '../../connectors/Comment'
@@ -36,6 +36,9 @@ export const Query = {
   },
   cartSize: async (parent, { customer_id }, context) => {
     return cartSizeConnector(context, customer_id)
+  },
+  search: async (parent, { input }, context) => {
+    return searchConnector(context, input)
   }
 }
 
