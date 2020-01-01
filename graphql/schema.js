@@ -12,6 +12,7 @@ export const schema = gql`
     grade(asset_type: String!): Float
     cart(customer_id: ID!): Cart
     cartSize(customer_id: ID!): Int
+    search(input: String!): [Asset]
   }
 
   type Comment {
@@ -35,6 +36,7 @@ export const schema = gql`
   type Contents {
     asset_type: String
     amount: Int
+    cost: Int
   }
 
   type Mutation {
@@ -87,6 +89,7 @@ export const schema = gql`
   input ContentInput {
     asset_type: String
     amount: Int
+    cost: Int
   }
 
   type OrderMetaOutput {
